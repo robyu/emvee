@@ -1,0 +1,25 @@
+
+
+<p>start={{ start_issue }}</p>
+<p>start={{ stop_issue }}</p>
+
+<form method=POST action="/mvvscrape/download_police_logs/">
+
+<input type=submit value="Continue >>" >
+
+</form>
+
+<!--
+list existing issues in the database
+-->
+
+{% if issue_list %}
+    <ul>
+    {% for issue in issue_list %}
+      <li>{{issue.issue_number}} {{issue.pub_date}} {{issue.police_log_url}}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No issues in DB</p>
+{% endif %}
+

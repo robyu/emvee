@@ -1,0 +1,89 @@
+
+<html>
+<head>
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+<title>List of MV Voice Issues</title>
+</head>
+<body>
+<!--
+ form to get search parameters 
+-->
+<form method=POST action="/mvvscrape/list_issues">
+
+Start Index:<input type=text size=5 maxlength=3 name=start_index>
+<p>
+Stop Index: <input type=text size=5 maxlength=3 name=stop_index>
+<p>
+<input type=submit value="Find Police Logs" name='find'> <!-- button name passed as key -->
+<br>
+<input type=submit value="Download Police Logs" name='download'> <!-- button name passed as key -->
+<br>
+<input type=submit value="Parse Police Logs" name='parse'> <!-- button name passed as key -->
+</form>
+<br>
+<hr style="width: 100%; height: 2px;">A Message from Our Sponsors<br>
+<br>
+<span style="font-family: Courier; color: rgb(255, 0, 0);">{{message}}</span><br>
+<hr style="width: 100%; height: 2px;"><br>
+
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2"
+cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Issue Number</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Issue Exists?</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Publication Date</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Police Log URL</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Downloaded File</span><br>
+</td>
+<td style="vertical-align: top; text-align: center;"><span
+style="font-weight: bold;">Crime Reports</span><br>
+</td>
+</tr>
+
+{% if issue_list %}
+    {% for issue in issue_list %}
+<tr>
+<td style="vertical-align: top; text-align: center;">{{issue.issue_number}}<br>
+</td>
+        {% if issue.issue_exists %}
+<td style="vertical-align: top; text-align: center;">Y<br>
+        {% else %}
+<td style="vertical-align: top; text-align: center;">N<br>
+        {% endif %}
+</td>
+<td style="vertical-align: top; text-align: center;">{{issue.pub_date}}<br>
+</td>
+<td style="vertical-align: top; text-align: center;">{{issue.police_log_url}}<br>
+</td>
+
+<td style="vertical-align: top; text-align: center;">{{issue.filename}}<br>
+</td>
+        {% if issue.has_crime_reports %}
+<td style="vertical-align: top; text-align: center;"><a href="http://localhost:8000/mvvscrape/list_crimes/{{issue.issue_number}}">{{issue.issue_number}}</a><br>
+        {% else %}
+<td style="vertical-align: top; text-align: center;">ain't none<br>
+        {% endif %}
+</td>
+</tr>
+    {% endfor %}
+{% endif %}
+
+
+</tbody>
+</table>
+<br>
+</body>
+</html>
+
+
+

@@ -1,0 +1,27 @@
+
+
+<!--
+ form to get search parameters 
+-->
+<form method=POST action="/mvvscrape/find_police_logs/go/">
+
+<input type=text size=5 maxlength=3 name=start_index>
+<p>
+<input type=text size=5 maxlength=3 name=stop_index>
+<p>
+<input type=submit value="Go Find Police Logs">
+
+</form>
+
+<!--
+list existing issues in the database
+-->
+{% if issue_list %}
+    <ul>
+    {% for issue in issue_list %}
+      <li>{{issue.issue_number}} {{issue.pub_date}} {{issue.police_log_url}}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No issues in DB</p>
+{% endif %}

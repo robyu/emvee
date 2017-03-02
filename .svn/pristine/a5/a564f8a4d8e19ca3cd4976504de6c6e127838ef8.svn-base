@@ -1,0 +1,533 @@
+ffDJANGO CMDS
+-----------
+django-admin.py startproject mysite
+
+python manage.py runserver
+
+python manage.py syncdb
+
+python manage.py validate
+python manage.py shell
+python manage.py sqlclear polls
+manage.py test mvvscrape    # run just "mvvscrape" unit tests
+
+superuser is ryu::ryu
+
+SQLITE3
+-------
+from dos
+> sqlite3 emvee.db
+.quit
+
+to drop mvvscrape tables:
+> drop table "mvvscrape_policelog";
+> drop table "mvvscrape_crimereport";
+
+LOGIN TO PERCY
+--------------
+to login to percy:
+from cygwin:
+ssh ryu@192.168.2.105 (pwd: jiggy001)
+
+$vncserver1
+
+then start vncviewer and connect to 192.168.2.105:1 (pwd: jiggy001)
+
+TO RUN
+------
+to run server:
+cd ~/2009/emvee
+python manage.py runserver
+
+to run admin app:
+browse to http://localhost:8000/admin
+login: ryu::ryu
+
+to run mvvscrape:
+http://localhost:8000/mvvscrape
+
+to run unit tests:
+python manage.py test mvvscrape
+
+SVN
+---
+export SVNHOME=svn+ssh://ryu@robertyu.org/mnt/bfhd/ryu/2009/svn
+    set SVNHOME to use svn+ssh protocol, user ryu@robertyu.org, svn repo
+
+svn commit -m "message"
+    commit all modified files
+
+svn commit a b c -m "message"
+    commit files a, b, and c
+
+svn status
+    list modified & unknown files in directory & subdirs
+
+svn list
+    list stuff in repo corresponding to current directory
+
+svn list $SVNHOME
+    list stuff in SVNHOME repo
+
+svn add a
+    add file a to repo
+
+svn update
+
+svn rm --force *.pyc
+    mark *.pyc for removal from repo; use commit to finalize
+
+svn checkout http://django-docs.googlecode.com/svn/trunk/ django-docs-read-only
+    check out stuff into directory named geopy-trunk
+
+svn co blah 
+    same as "svn checkout"
+
+svn mkdir test_out
+    create new subdirectory test_out; needs commit to finalize?
+
+Latest Entries At Top
+==============================
+2009-06-29
+putting this stuff aside for now.  check all emvee stuff into svn.
+where I stopped:
+- added new crimes from latest issue of mv voice; need unit tests?
+- try to plot crime data!
+
+also, I vaguely seem to recall modifying geopy code a little bit.  maybe want to create my own local repo of this stuff.
+
+2009-06-18
+added new crimes.  may want to add some unit tests to check that code properly differentiates between, say, burglary/residential and burglary/commercial.
+
+2009-06-17
+rewrote parsepolicelog into a class, added geocoder
+modified tests to use new PoliceLogParser class
+tests now take longer because of geocoding step
+
+ran into python weirdness regarding attributes, e.g.
+class Test(object):
+      is_initialized=False
+
+      def setUp(self):
+      	  print Test.is_initialized   # can't use self.is_initialized, though this parses!
+
+to do:
+   modify view to remove geocoder
+   map it!
+   break up tests into separate files
+
+
+2009-06-12
+these legit addresses failed from issue 38:
+1200 block Cuernavaca Cl.
+800 block El Camino Real
+
+rewrite stuff like "cuernavaca cl." -> "cuernavaca circulo" in mvgeocoder 
+because it's a geographically local thing
+
+it may make sense to rewrite "block" in parsepolicelog.py
+
+
+TO DO:  once I run the geocoder, need to write the lat/long coordinates back into the db!
+
+
+
+2009-06-11
+mucking around with views & url & templates to create list_crimes view.  
+modified the list_issues view so that if the database contains crime reports
+corresponding to issue N, then display a live link in the table.  But how do I pass
+the issue number in the URL to the view handler?
+
+2009-06-04
+further thoughts on geocoder:  if error, report nothing.  instead, assign cooridnates to somewhere improbable like middle of bay or (0,0).
+
+2009-05-29
+started working on geocoder.  see mvgeocoder.py and corresponding "block" test in tests.py
+
+2009-05-26
+got full trunk checkout of django in fromsvn/django-trunk.  added this to pythonpath.
+django-docs still doesn't work.  punt on that.  ridiculous that it's so hard to get local docs!
+
+p.s.  I should be able to cd django/doc, then "make html"
+
+redid model so that crime.category and crime.mapscale are strings rather than ints.  from what I read on the web,
+the general rule of thumb for db schemas is:  if you're gonna do math, use numbers.  otherwise,
+use strings.
+
+to do:
+write geocoding module
+
+
+
+2009-05-20
+django-docs not working because I don't have full svn checkout of django?
+/docs directory missing.
+
+to do:
+punt because I odn't have django docs
+try to parse 000039.  will need to modify 000038 tests to query db just for 000038 crime reports.
+
+
+2009-05-18
+wrote first parse tests
+
+no internet access on ship.  how to continue?  
+1. try to parse all the logs I have on my hd.
+2. create app interface for parser
+
+in list_issues.html, how to create appropriate link for parser action?
+
+2009-05-15
+revisit geopy:
+http://code.google.com/p/geopy/wiki/GettingStarted
+
+You can use the Google geocoder without an API key by querying the actual Google Maps interface instead. This geocoder is supposedly more up-to-date and thus may have more addresses available:
+
+>>> g = geocoders.Google(resource='maps', output_format='json')
+>>> place, (lat, lng) = g.geocode("10900 Euclid Ave in Cleveland")  
+>>> print "%s: %.5f, %.5f" % (place, lat, lng)  
+10900 Euclid Ave, Cleveland, OH 44106, USA: 41.50489, -81.61027  
+
+
+had to install setuptools module:
+http://stackoverflow.com/questions/309412/how-to-setup-setuptools-for-python-2-6-on-windows
+
+jason output doesn't work, so use 'kml'
+http://groups.google.com/group/geopy/browse_thread/thread/f6cbc898fad4f329?pli=1
+
+
+getting ahead of myself here.  need to stuff results into database.
+run more parser tests.
+
+2009-05-14
+to do:
+make tests read entirely from test_data directory, and check contents into svn
+write test to parse short_log.html, check results
+  
+2009-05-13
+to do:
+parsing
+
+2009-05-13
+for picking date: django models.DateTimeField
+also:  what are these "widgets"?
+http://groups.google.com/group/django-users/browse_thread/thread/57733d0bbcbdc765
+
+at some point, should read about forms:
+http://docs.djangoproject.com/en/dev/topics/forms/
+
+
+2009-05-12
+to do:
+define exceptions in findpolicelog to handle log download
+hook up button
+need way to "import" downloaded logs
+test:  download file and check file exists
+move downloaded files to emvee/mvvscrape/policelogs?
+
+2009-05-11
+to do:
+make nice table in issue_list
+move templates to emvee/
+get rid of "go_find_police_log" stuff -- don't need anymore
+create "download policelog" view
+
+2009-05-08
+issue 44 (2006-03-17) is missing
+
+to do:
+work on default view for localhost/emvee:  list_issues.html, views.list_issues
+should work like this:
+list all known issues as table
+use form to identify new issues and populate db
+
+
+
+2009-05-08
+class Poll(models.Model):
+    question = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('date published')
+
+class Choice(models.Model):
+    poll = models.ForeignKey(Poll)
+    choice = models.CharField(max_length=200)
+    votes = modelsIntegerField()
+
+list all Poll objects:
+Poll.objects.all()
+    calls object's __unicode__() method
+
+create new Poll:
+p = Poll(question='whats up?',pub_date=datetime.datetime.now())
+
+save objects into database
+p.save()
+
+get fields
+p.id
+p.question
+p.pub_date
+
+lookup API:
+doc: db queries
+Poll.objects.filter(id=1)
+Poll.objects.filter(question__startswith='What')   filter param name depends on field type
+Poll.objects.get(pub_date__year=2007)
+
+p = Poll.objects.get(id=1)
+p = Poll.objects.get(pk=1)  get primary key==1, same as above query
+
+c = p.choice_set.create(choice='not much',votes=0)  create new choice associated with poll p
+c.poll  get poll associated with choice c (lower case "poll"??!)
+
+p.choice_set.all()    get set of choices associated with poll p
+
+2009-05-06
+svn import confusion.  what's the top level directory?
+
+so I create a directory called temp, which looks like this:
+temp/
+	/ProjEmvee
+		/branch
+		/tags
+		/trunk
+
+then I import:
+  668  svn import . svn+ssh://ryu@192.168.2.105/mnt/bfhd/ryu/2009/svn -m "initial import"
+
+then I can do svn list:
+which lists just ProjEmvee.  So far, so good.
+
+To checkout:
+  675  svn checkout svn+ssh://ryu@192.168.2.105/mnt/bfhd/ryu/2009/svn
+
+Unexpectedly, this created a directory called "svn" containing ProjEmvee:
+/svn
+	/ProjEmvee
+
+So then I try this:
+  681  svn checkout svn+ssh://ryu@192.168.2.105/mnt/bfhd/ryu/2009/svn/ProjEmvee
+
+Which gives me what I want:  a subdirectory named ProjEmvee
+/ProjEmvee
+
+
+
+2009-05-01
+get svn server working?
+
+ssh already working on percy
+use svn via tunneling (svn+ssh://)
+
+to vnc-over-ssl to percy:
+ssh ryu@robertyu.org -L5901:percy:5901
+
+then vnc to localhost:1
+
+to set up svn server:
+http://www.subversionary.org/howto/setting-up-a-subversion-server-on-ubuntu-gutsy-gibbon-server
+
+or 
+http://www.tonyspencer.com/2007/03/02/setup-a-subversion-server-in-4-minutes/
+
+2009-05-01
+install python26
+
+grabbed django code via cygwin svn:
+svn co http://code.djangoproject.com/svn/django/trunk/django django
+
+got mvvscrape working
+had to change settings.py to reflect paths to sqlite file and templates
+
+
+
+4/27/2009
+to do:
+get django working on my laptop.  yeah, eventually I'll need to move back to ubuntu for the geodjango stuff.  I'm a long way from there, though.
+
+follow instructions here: http://wiki.thinkhole.org/howto:django_on_windows
+
+re-integrate findpolicelog into django framework.  I want to keep it real, and 
+and by developing outside of django, I risk making design decisions I'll later regret.
+besides, the whole point of this exercise was to learn django, right?
+goals:  push button, see database table with findpolicelog output
+
+revisit findpolicelog schema.  I think I need:
+-issue number
+-issue date
+-URL
+-filename of downloaded log
+
+
+download entire corpus of police logs, so I can get to work with parsepolicelog
+
+revisit parsepolicelog output schema.  what data do I need?
+
+reintegrate parsepolicelog with django.  goal is to push button, see
+table of crimes linked to policelog table.
+
+
+3/2/2009
+to do:
+unit tests for scan, download, & parse
+modify parsepolicelog to return some sort of testable summary (like items per category, plus max length of run in a category)
+
+
+2/24/2009
+thinking ahead this morning:
+will bluehost support geodjango?  it supports postgresql, so I think I just need to worry about getting django running on bluehost, which seems to be feasible.
+
+came across indications that geodjango has been integrated into django 1.0
+this may be worth checking out:
+http://code.google.com/p/geodjango-basic-apps/
+
+unit tests are built into django 1.0 (which I'm using).  can run from manage.py and will create a new database for testing.
+
+the plan:
+get scraper working, including populating the database.  write unit tests.  don't need to separate scraper code from database code because I can test them together, and they're never going to run separately anyways.
+
+making progress on parsing police report entries.  they aren't consistent from report to report, so this will take some work.
+
+sanity check:  valid report lines are consistently 2 lines apart?
+
+
+2/23/2009
+. (dot) 	Any single character
+\d 	Any single digit
+[A-Z] 	Any character between A and Z (uppercase)
+[a-z] 	Any character between a and z (lowercase)
+[A-Za-z] 	Any character between a and z (case-insensitive)
++ 	One or more of the previous expression (e.g., \d+ matches one or more digit)
+[^/]+ 	One or more characters until (and not including) a forward slash
+? 	Zero or one of the previous expression (e.g., \d? matches zero or one digits)
+* 	Zero or more of the previous expression (e.g., \d* matches zero, one or more than one digit)
+{1,3} 	Between one and three (inclusive) of the previous expression (e.g., \d{1,3} matches one, two or three digits)
+
+
+2/20/2009
+looking at google maps api.  I'm not relishing the thought of picking up yet another language (javascript), but look, I found geopy, which looks perfect:
+
+http://exogen.case.edu/projects/geopy/
+
+On the other hand, I might have to learn javascript to actually render the maps
+http://pypi.python.org/pypi/setuptools#rpm-based-systems
+
+
+In the policelog files, I can identify the "crime headers" because they are always preceded by <B>
+
+Here is the google maps api info:
+http://code.google.com/apis/maps/
+
+Here are tutorials on google maps:
+http://code.google.com/apis/maps/documentation/articles.html
+
+to handle intersections, query google like this:
+calderon ave at w el camino real, mountain view, ca
+
+
+
+2/17/2009
+next step:
+look at the files I've downloaded, figure out database schema
+
+2/14/2009
+next step:  
+implement "continue>>" button on mvvscrape/find_police_logs/go
+i.e. for each entry in db, download the corresponding URL and save in local file
+
+2/14/2009
+still integrating first scraper into framework, but made some progress now.  next task:  create new PoliceLog object and write to database.
+
+made PoliceLog.issue_number into primary key
+added application-wide logging via python's logging facility
+this does nothing:
+for x in range(y,y):
+
+
+
+
+2/9/2009
+starting to grok how data is passed from forms to view
+parameters are always named by the "name" tag
+parameters are always strings
+
+
+2/7/2009
+integrating my initial webscraper into "emvee"
+
+format for date in models.py is "2009-02-07"
+
+2/2/2009
+for future reference:  pyjama docs
+
+VNC over ssh tunneling:
+http://robertyu.com/wikiperdido/VNC%20Over%20SSH
+
+
+http://pyjs.org/
+http://pyjs.org/book/output/Bookreader.html
+
+1/31/2009
+also, I'm annoyed at ubuntu because the remote-desktop thing didn't work for me, forcing me to use vncserver, forcing me into the whole emacs-rgb.txt file fiasco
+
+started tutorial part 3
+
+
+
+1/29/2009
+superuser is ryu::ryu
+
+1/27/2009
+just start with django
+
+installed django
+bin files are in /usr/lib/python-django/bin
+
+
+
+X11 emacs not working on ubuntu:  "undefined color: black"
+see http://ubuntuforums.org/showthread.php?t=90751&page=2)
+
+sudo ln -s /etc/X11/rgb.txt /usr/share/X11/rgb.txt
+
+Restart Xgl | X
+
+
+
+stopped at bottom of tutorial #1
+http://docs.djangoproject.com/en/dev/intro/tutorial01/#intro-tutorial01
+
+db API looks very powerful:  like ruby's activetables
+
+
+1/27/2009
+reading geodjango tutorial; I don't understand a damn thing.
+
+more on django:
+http://toys.jacobian.org/presentations/2008/pycon/tutorial/
+http://www.djangoproject.com/documentation/design_philosophies/
+http://www.djangobook.com/en/1.0/chapter01/
+http://www.djangoproject.com/documentation/
+
+
+
+
+geodjango install:
+http://geodjango.org/docs/install.html#id13
+
+install geos:
+need to install apt-get install g++
+
+1/25/2009
+pulled old 933 MHz PC out of my garage and installed ubuntu.  Configured it as a headless system:  static IP, access via ssh and VNC.
+
+setting up the static IP was surprisingly difficult.  normal method didn't work.  had to ditch ubuntu's "network manager" and install "wicd".  serious bug!
+     
+
+
+
+
+
+
+
+
